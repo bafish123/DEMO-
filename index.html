@@ -32,11 +32,12 @@
     }
 
     main {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 10px auto 40px;
       padding: 0 20px;
     }
 
+    /* SWITCHER */
     .switcher {
       display: flex;
       gap: 12px;
@@ -74,24 +75,17 @@
       transform: translateY(-1px);
     }
 
-    .flex-layout {
+    /* GRID */
+    .grid-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 24px;
-      align-items: flex-start;
-    }
-
-    @media (max-width: 900px) {
-      .flex-layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
     }
 
     .box {
       background: radial-gradient(circle at top left, rgba(15,23,42,.9), rgba(15,23,42,.98));
       padding: 22px 22px 20px;
       border-radius: 16px;
-      margin-bottom: 18px;
       box-shadow: 0 18px 80px rgba(15,23,42,.85);
       border: 1px solid rgba(148,163,184,.55);
     }
@@ -123,12 +117,6 @@
       background: rgba(15,23,42,.8);
     }
 
-    .agent-highlight {
-      font-size: 13px;
-      opacity: .9;
-      line-height: 1.5;
-    }
-
     ul {
       padding-left: 18px;
       margin: 8px 0 0;
@@ -152,14 +140,16 @@
 
 <main>
 
+  <!-- SWITCHER -->
   <div class="switcher">
     <button id="btn-a" onclick="loadAgent('amico', this)">
       <span class="icon">🪨</span>
       <span>
-        Wersja A – branżowa (kamień)<br>
+        Wersja A – branżowa<br>
         <small style="opacity:.75;">krótko, rzeczowo, warsztatowo</small>
       </span>
     </button>
+
     <button id="btn-b" onclick="loadAgent('demo', this)">
       <span class="icon">💬</span>
       <span>
@@ -167,6 +157,7 @@
         <small style="opacity:.75;">przyjaźnie, edukacyjnie</small>
       </span>
     </button>
+
     <button id="btn-c" onclick="loadAgent('premium', this)">
       <span class="icon">✨</span>
       <span>
@@ -176,53 +167,62 @@
     </button>
   </div>
 
-  <div class="flex-layout">
-    <div>
-      <div class="box">
-        <h2>Przykładowa treść strony klienta</h2>
-        <p>
-          Ta strona służy wyłącznie do prezentacji działania asystenta AI.
-          Po prawej stronie ekranu pojawia się widget, którego wygląd i sposób
-          rozmowy zmieniają się po wybraniu jednej z wersji powyżej.
-        </p>
-        <p class="agent-highlight">
-          Każdy wariant korzysta z tego samego silnika AI, ale ma inny:
-          sposób komunikacji, styl odpowiedzi, wygląd widgetu i zachowanie.
-        </p>
-        <div class="badge-row">
-          <div class="badge">Branżowy język</div>
-          <div class="badge">Personalizacja stylu</div>
-          <div class="badge">Responsywny widget</div>
-          <div class="badge">Integracja jednym skryptem</div>
-        </div>
-      </div>
+  <!-- 4 BOXES -->
+  <div class="grid-layout">
 
-      <div class="box">
-        <h2>Co pokazuje to demo?</h2>
-        <ul>
-          <li>Jak ten sam silnik AI może mówić innym językiem marki</li>
-          <li>Jak wygląd widgetu dopasowuje się do identyfikacji wizualnej klienta</li>
-          <li>Jak szybko można przełączać się między różnymi wariantami</li>
-          <li>Że wdrożenie na stronie klienta to jedna linijka kodu</li>
-        </ul>
+    <div class="box">
+      <h2>Przykładowa treść strony klienta</h2>
+      <p>
+        Ta strona służy wyłącznie do prezentacji działania asystenta AI.
+        Po prawej stronie ekranu pojawia się widget, którego wygląd i sposób
+        rozmowy zmieniają się po wybraniu jednej z wersji powyżej.
+      </p>
+      <p>
+        Każdy wariant korzysta z tego samego silnika AI, ale ma inny:
+        sposób komunikacji, styl odpowiedzi, wygląd widgetu i zachowanie.
+      </p>
+      <div class="badge-row">
+        <div class="badge">Branżowy język</div>
+        <div class="badge">Personalizacja stylu</div>
+        <div class="badge">Responsywny widget</div>
+        <div class="badge">Integracja jednym skryptem</div>
       </div>
     </div>
 
-    <div>
-      <div class="box">
-        <h2>Jak wygląda wdrożenie u klienta?</h2>
-        <p>
-          Na stronie klienta dodawana jest jedna linijka skryptu z identyfikatorem
-          asystenta. Cała logika, wygląd i wiedza asystenta są trzymane po stronie
-          Kontaktio – klient nie musi niczego aktualizować ani utrzymywać.
-        </p>
-        <p class="agent-highlight">
-          Ten panel pokazuje tylko różne warianty wyglądu i zachowania.
-          W realnym wdrożeniu asystent jest dopasowany do konkretnej firmy,
-          branży i stylu komunikacji.
-        </p>
-      </div>
+    <div class="box">
+      <h2>Jak wygląda wdrożenie u klienta?</h2>
+      <p>
+        Na stronie klienta dodawana jest jedna linijka skryptu z identyfikatorem
+        asystenta. Cała logika, wygląd i wiedza asystenta są trzymane po stronie Kontaktio –
+        klient nie musi niczego aktualizować ani utrzymywać.
+      </p>
+      <p>
+        Ten panel pokazuje tylko różne warianty wyglądu i zachowania.
+        W realnym wdrożeniu asystent jest dopasowany do konkretnej firmy,
+        branży i stylu komunikacji.
+      </p>
     </div>
+
+    <div class="box">
+      <h2>Co pokazuje to demo?</h2>
+      <ul>
+        <li>Jak ten sam silnik AI może mówić innym językiem marki</li>
+        <li>Jak wygląd widgetu dopasowuje się do identyfikacji wizualnej klienta</li>
+        <li>Jak szybko można przełączać się między różnymi wariantami</li>
+        <li>Że wdrożenie na stronie klienta to jedna linijka kodu</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h2>Dlaczego warto wdrożyć Kontaktio?</h2>
+      <ul>
+        <li>Automatyczna obsługa klientów 24/7</li>
+        <li>Oszczędność czasu zespołu i szybsze odpowiedzi</li>
+        <li>Nowoczesny wygląd i pełna personalizacja</li>
+        <li>Bezpieczne, lekkie i łatwe w integracji rozwiązanie</li>
+      </ul>
+    </div>
+
   </div>
 
 </main>
@@ -231,268 +231,18 @@
   Kontaktio • demo prezentacyjne • kontaktio@zohomail.eu
 </footer>
 
+<!-- WŁAŚCIWE ŁADOWANIE WIDGETU Z CDN -->
 <script>
   let currentScript = null;
 
   function loadAgent(clientId, btn) {
-    // usuń poprzedni widget
     if (currentScript) currentScript.remove();
     document.querySelectorAll("#k-widget, #k-launcher").forEach(el => el.remove());
     window.KontaktioLoaded = false;
 
-    // aktywny przycisk
     document.querySelectorAll(".switcher button").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
-    // załaduj nowy widget
-    const s = document.createElement("script");
-    s.src = "<!DOCTYPE html>
-<html lang="pl">
-<head>
-  <meta charset="UTF-8">
-  <title>Kontaktio – Demo wariantów asystenta AI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-      background: radial-gradient(circle at top, #0f172a 0, #020617 40%, #020617 100%);
-      color: #e5e7eb;
-    }
-
-    header {
-      padding: 40px 20px 30px;
-      text-align: center;
-    }
-
-    header h1 {
-      margin: 0 0 10px;
-      font-size: 32px;
-    }
-
-    header p {
-      margin: 0;
-      opacity: 0.8;
-      font-size: 15px;
-    }
-
-    main {
-      max-width: 1000px;
-      margin: 10px auto 40px;
-      padding: 0 20px;
-    }
-
-    .switcher {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-    }
-
-    .switcher button {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 999px;
-      background: rgba(15,23,42,.8);
-      cursor: pointer;
-      font-size: 13px;
-      color: #e5e7eb;
-      border: 1px solid rgba(148,163,184,.6);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all .2s ease;
-    }
-
-    .switcher button span.icon {
-      font-size: 16px;
-    }
-
-    .switcher button.active {
-      background: linear-gradient(135deg, #2563eb, #7c3aed);
-      border-color: transparent;
-      box-shadow: 0 15px 40px rgba(37,99,235,.45);
-    }
-
-    .switcher button:hover {
-      transform: translateY(-1px);
-    }
-
-    .flex-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-      gap: 24px;
-      align-items: flex-start;
-    }
-
-    @media (max-width: 900px) {
-      .flex-layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .box {
-      background: radial-gradient(circle at top left, rgba(15,23,42,.9), rgba(15,23,42,.98));
-      padding: 22px 22px 20px;
-      border-radius: 16px;
-      margin-bottom: 18px;
-      box-shadow: 0 18px 80px rgba(15,23,42,.85);
-      border: 1px solid rgba(148,163,184,.55);
-    }
-
-    .box h2 {
-      margin-top: 0;
-      font-size: 20px;
-      margin-bottom: 10px;
-    }
-
-    .box p, .box li {
-      font-size: 14px;
-      color: #cbd5f5;
-    }
-
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .badge {
-      font-size: 11px;
-      padding: 4px 9px;
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,.7);
-      color: #94a3b8;
-      background: rgba(15,23,42,.8);
-    }
-
-    .agent-highlight {
-      font-size: 13px;
-      opacity: .9;
-      line-height: 1.5;
-    }
-
-    ul {
-      padding-left: 18px;
-      margin: 8px 0 0;
-    }
-
-    footer {
-      text-align: center;
-      font-size: 12px;
-      opacity: 0.6;
-      margin: 20px 0 18px;
-      color: #9ca3af;
-    }
-  </style>
-</head>
-<body>
-
-<header>
-  <h1>Kontaktio – demo asystenta AI</h1>
-  <p>Trzy różne style wyglądu i zachowania jednego silnika AI</p>
-</header>
-
-<main>
-
-  <div class="switcher">
-    <button id="btn-a" onclick="loadAgent('amico', this)">
-      <span class="icon">🪨</span>
-      <span>
-        Wersja A – branżowa (kamień)<br>
-        <small style="opacity:.75;">krótko, rzeczowo, warsztatowo</small>
-      </span>
-    </button>
-    <button id="btn-b" onclick="loadAgent('demo', this)">
-      <span class="icon">💬</span>
-      <span>
-        Wersja B – uniwersalna<br>
-        <small style="opacity:.75;">przyjaźnie, edukacyjnie</small>
-      </span>
-    </button>
-    <button id="btn-c" onclick="loadAgent('premium', this)">
-      <span class="icon">✨</span>
-      <span>
-        Wersja C – premium<br>
-        <small style="opacity:.75;">elegancko, ekskluzywnie</small>
-      </span>
-    </button>
-  </div>
-
-  <div class="flex-layout">
-    <div>
-      <div class="box">
-        <h2>Przykładowa treść strony klienta</h2>
-        <p>
-          Ta strona służy wyłącznie do prezentacji działania asystenta AI.
-          Po prawej stronie ekranu pojawia się widget, którego wygląd i sposób
-          rozmowy zmieniają się po wybraniu jednej z wersji powyżej.
-        </p>
-        <p class="agent-highlight">
-          Każdy wariant korzysta z tego samego silnika AI, ale ma inny:
-          sposób komunikacji, styl odpowiedzi, wygląd widgetu i zachowanie.
-        </p>
-        <div class="badge-row">
-          <div class="badge">Branżowy język</div>
-          <div class="badge">Personalizacja stylu</div>
-          <div class="badge">Responsywny widget</div>
-          <div class="badge">Integracja jednym skryptem</div>
-        </div>
-      </div>
-
-      <div class="box">
-        <h2>Co pokazuje to demo?</h2>
-        <ul>
-          <li>Jak ten sam silnik AI może mówić innym językiem marki</li>
-          <li>Jak wygląd widgetu dopasowuje się do identyfikacji wizualnej klienta</li>
-          <li>Jak szybko można przełączać się między różnymi wariantami</li>
-          <li>Że wdrożenie na stronie klienta to jedna linijka kodu</li>
-        </ul>
-      </div>
-    </div>
-
-    <div>
-      <div class="box">
-        <h2>Jak wygląda wdrożenie u klienta?</h2>
-        <p>
-          Na stronie klienta dodawana jest jedna linijka skryptu z identyfikatorem
-          asystenta. Cała logika, wygląd i wiedza asystenta są trzymane po stronie
-          Kontaktio – klient nie musi niczego aktualizować ani utrzymywać.
-        </p>
-        <p class="agent-highlight">
-          Ten panel pokazuje tylko różne warianty wyglądu i zachowania.
-          W realnym wdrożeniu asystent jest dopasowany do konkretnej firmy,
-          branży i stylu komunikacji.
-        </p>
-      </div>
-    </div>
-  </div>
-
-</main>
-
-<footer>
-  Kontaktio • demo prezentacyjne • kontaktio@zohomail.eu
-</footer>
-
-<script>
-  let currentScript = null;
-
-  function loadAgent(clientId, btn) {
-    // usuń poprzedni widget
-    if (currentScript) currentScript.remove();
-    document.querySelectorAll("#k-widget, #k-launcher").forEach(el => el.remove());
-    window.KontaktioLoaded = false;
-
-    // aktywny przycisk
-    document.querySelectorAll(".switcher button").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-
-    // załaduj nowy widget
     const s = document.createElement("script");
     s.src = "https://cdn.jsdelivr.net/gh/kontaktio-demo/kontaktio@a670d49/kontaktio.js";
     s.setAttribute("data-client", clientId);
