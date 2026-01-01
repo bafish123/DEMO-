@@ -2,68 +2,167 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Kontaktio DEMO dla firmy Pracownia Kamieniarska AMICO</title>
+  <title>Kontaktio – Demo wariantów asystenta AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
       background: #f4f4f4;
+      color: #111;
     }
 
     header {
       background: #111;
       color: #fff;
-      padding: 30px;
+      padding: 40px 20px;
       text-align: center;
     }
 
+    header h1 {
+      margin: 0 0 10px;
+      font-size: 32px;
+    }
+
+    header p {
+      margin: 0;
+      opacity: 0.8;
+      font-size: 16px;
+    }
+
     main {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 40px auto;
       padding: 0 20px;
     }
 
+    .switcher {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .switcher button {
+      padding: 14px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #e5e5e5;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all .2s ease;
+    }
+
+    .switcher button.active {
+      background: #111;
+      color: #fff;
+    }
+
+    .switcher button:hover {
+      transform: translateY(-1px);
+    }
+
     .box {
       background: #fff;
-      padding: 20px;
-      border-radius: 8px;
+      padding: 24px;
+      border-radius: 12px;
       margin-bottom: 30px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    .box h2 {
+      margin-top: 0;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 13px;
+      opacity: 0.6;
+      margin: 60px 0 20px;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>Pracownia Kamieniarska AMICO</h1>
-  <p>Kamień naturalny • Blaty • Schody • Parapety</p>
+  <h1>Kontaktio – demo asystenta AI</h1>
+  <p>Porównanie wariantów wyglądu i zachowania asystenta dla firm</p>
 </header>
 
 <main>
+
+  <!-- 🔥 PRZEŁĄCZNIK WERSJI -->
+  <div class="switcher">
+    <button id="btn-a" onclick="loadAgent('amico', this)">
+      Wersja A – branżowa (kamień)
+    </button>
+    <button id="btn-b" onclick="loadAgent('demo', this)">
+      Wersja B – uniwersalna
+    </button>
+    <button id="btn-c" onclick="loadAgent('premium', this)">
+      Wersja C – premium
+    </button>
+  </div>
+
+  <!-- CONTENT FAKE KLIENTA -->
   <div class="box">
-    <h2>O nas</h2>
-    <p>Specjalizujemy się w realizacjach z kamienia naturalnego na wymiar.</p>
+    <h2>Przykładowa treść strony klienta</h2>
+    <p>
+      Ta strona służy wyłącznie do prezentacji działania asystenta AI.
+      Po prawej stronie ekranu pojawi się widget, którego wygląd i zachowanie
+      można zmieniać, wybierając jedną z wersji powyżej.
+    </p>
   </div>
 
   <div class="box">
-    <h2>Oferta</h2>
-    <p>Blaty kuchenne, schody, parapety, posadzki, obudowy kominków.</p>
+    <h2>Co pokazuje to demo?</h2>
+    <ul>
+      <li>Różne style komunikacji asystenta</li>
+      <li>Inny wygląd i kolorystyka widgetu</li>
+      <li>Dopasowanie do branży klienta</li>
+      <li>Ten sam mechanizm – różne warianty</li>
+    </ul>
   </div>
 
-  <div class="box">
-    <h2>Kontakt</h2>
-    <p>Telefon: 785-04-06-09</p>
-  </div>
 </main>
 
-<!-- 🔥 JEDYNA ISTOTNA LINIJKA -->
-<script
-  src="https://cdn.jsdelivr.net/gh/bafish123/kontaktio@cc20fb5/kontaktio.js"
-  data-client="amico">
-</script>
+<footer>
+  Kontaktio • demo prezentacyjne
+</footer>
 
+<!-- ================= LOGIKA DEMO ================= -->
+<script>
+  let currentScript = null;
+
+  function loadAgent(clientId, btn) {
+    // usuń poprzedni widget i skrypt
+    if (currentScript) currentScript.remove();
+    document.querySelectorAll("#k-widget, #k-launcher").forEach(el => el.remove());
+    window.KontaktioLoaded = false;
+
+    // aktywny przycisk
+    document.querySelectorAll(".switcher button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    // wstrzyknij nowego agenta
+    const s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/gh/bafish123/kontaktio@cc20fb5/kontaktio.js";
+    s.setAttribute("data-client", clientId);
+    s.defer = true;
+
+    document.body.appendChild(s);
+    currentScript = s;
+  }
+
+  // domyślnie ładujemy wersję A
+  window.onload = () => {
+    loadAgent("amico", document.getElementById("btn-a"));
+  };
+</script>
 
 </body>
 </html>
