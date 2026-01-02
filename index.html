@@ -28,7 +28,7 @@
       overflow-x: hidden;
     }
 
-    /* Aurora canvas */
+    
     #kontaktio-aurora {
       position: fixed;
       inset: 0;
@@ -67,7 +67,7 @@
       z-index: 1;
     }
 
-    /* SWITCHER */
+    
     .switcher {
       display: flex;
       gap: 12px;
@@ -122,7 +122,7 @@
       transform: translateY(-1px);
     }
 
-    /* GRID 2×2 */
+    
     .grid-layout {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -203,7 +203,7 @@
       z-index: 1;
     }
 
-    /* lekkie zróżnicowanie paneli przy zmianie agenta */
+    
     body[data-k-client="amico"] .box::after {
       background: radial-gradient(circle at 0 0, rgba(248,153,64,0.25), transparent 60%);
     }
@@ -317,7 +317,7 @@
 </footer>
 
 <script>
-  // Kolory zorzy i tekstów dla poszczególnych agentów
+  
   const AURORA_THEME = {
     demo: {
       c1: "0.0, 0.9, 1.0",
@@ -362,7 +362,7 @@
     document.body.setAttribute("data-k-client", clientId);
   }
 
-  // Aurora WebGL
+ 
   (function initAurora() {
     const canvas = document.getElementById("kontaktio-aurora");
     const gl = canvas.getContext("webgl");
@@ -481,7 +481,7 @@
     requestAnimationFrame(render);
   })();
 
-  // Dynamiczne ładowanie agenta z CDN
+  
   let currentScriptRef = null;
 
   function loadAgent(clientId, btn) {
@@ -498,7 +498,7 @@
     if (btn) btn.classList.add("active");
 
     const s = document.createElement("script");
-    s.src = "https://cdn.jsdelivr.net/gh/kontaktio-demo/kontaktio@d0b5df3/kontaktio.js"; // ← PODMIENIASZ NA SWÓJ LINK
+    s.src = "https://cdn.jsdelivr.net/gh/kontaktio-demo/kontaktio@0effa36/kontaktio.js"; 
     s.defer = true;
     s.setAttribute("data-client", clientId);
     document.body.appendChild(s);
