@@ -669,21 +669,6 @@
       border-color: rgba(255,255,255,.22);
     }
 
-    .kbd{
-      display:inline-flex;
-      align-items:center;
-      height: 24px;
-      padding: 0 9px;
-      border-radius: 10px;
-      border: 1px solid var(--kbdStroke);
-      background: var(--kbd);
-      color: rgba(255,255,255,.70);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .01em;
-      user-select:none;
-    }
-
     /* Footer */
     footer{
       margin-top: 26px;
@@ -834,7 +819,6 @@
         <div class="actions">
           <button class="btn primary" id="btnOpen" type="button" data-i18n="buttons.open">Otwórz asystenta</button>
           <button class="btn" id="btnClear" type="button" data-i18n="buttons.clear">Wyczyść rozmowę</button>
-          <span class="kbd" id="kbdHint" aria-hidden="true">Enter</span>
         </div>
       </div>
       <div class="divider"></div>
@@ -1161,6 +1145,59 @@
       premium: { pl: {title:"Premium", descKey:"agent.premium"}, en: {title:"Premium", descKey:"agent.premium"} }
     };
 
+    // ===== WOW THEMES per agent (DEMO ONLY) =====
+    // This injects CSS variables and overrides the widget style after Kontaktio mounts.
+    const WIDGET_THEMES = {
+      amico: {
+        launcherBg: "linear-gradient(135deg, rgba(16,185,129,.95), rgba(34,211,238,.95))",
+        launcherText: "#02120f",
+        headerBg: "linear-gradient(135deg, rgba(16,185,129,.95), rgba(34,211,238,.95))",
+        headerText: "#02120f",
+        widgetBg: "linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06))",
+        border: "rgba(255,255,255,.18)",
+        inputBg: "rgba(255,255,255,.10)",
+        inputText: "rgba(255,255,255,.92)",
+        userBg: "linear-gradient(135deg, rgba(16,185,129,.95), rgba(34,211,238,.95))",
+        userText: "#02120f",
+        botBg: "rgba(255,255,255,.10)",
+        botText: "rgba(255,255,255,.90)",
+        quickBg: "rgba(255,255,255,.08)",
+        quickText: "rgba(255,255,255,.88)"
+      },
+      demo: {
+        launcherBg: "linear-gradient(135deg, rgba(37,99,235,.95), rgba(124,58,237,.95))",
+        launcherText: "#ffffff",
+        headerBg: "linear-gradient(135deg, rgba(37,99,235,.95), rgba(124,58,237,.95))",
+        headerText: "#ffffff",
+        widgetBg: "linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06))",
+        border: "rgba(255,255,255,.18)",
+        inputBg: "rgba(0,0,0,.18)",
+        inputText: "rgba(255,255,255,.92)",
+        userBg: "linear-gradient(135deg, rgba(37,99,235,.95), rgba(124,58,237,.95))",
+        userText: "#ffffff",
+        botBg: "rgba(255,255,255,.09)",
+        botText: "rgba(255,255,255,.90)",
+        quickBg: "rgba(255,255,255,.08)",
+        quickText: "rgba(255,255,255,.88)"
+      },
+      premium: {
+        launcherBg: "linear-gradient(135deg, rgba(245,158,11,.95), rgba(16,185,129,.55))",
+        launcherText: "#0b0b0b",
+        headerBg: "linear-gradient(135deg, rgba(245,158,11,.95), rgba(16,185,129,.55))",
+        headerText: "#0b0b0b",
+        widgetBg: "linear-gradient(180deg, rgba(255,255,255,.11), rgba(255,255,255,.05))",
+        border: "rgba(255,255,255,.22)",
+        inputBg: "rgba(255,255,255,.10)",
+        inputText: "rgba(255,255,255,.92)",
+        userBg: "linear-gradient(135deg, rgba(245,158,11,.95), rgba(16,185,129,.55))",
+        userText: "#0b0b0b",
+        botBg: "rgba(255,255,255,.10)",
+        botText: "rgba(255,255,255,.92)",
+        quickBg: "rgba(255,255,255,.08)",
+        quickText: "rgba(255,255,255,.88)"
+      }
+    };
+
     // ===== State =====
     let currentScript = null;
     let currentClientId = "amico";
@@ -1177,7 +1214,6 @@
         const key = node.getAttribute("data-i18n");
         node.textContent = t(key);
       });
-      // Agent text
       setAgentMeta(currentClientId);
     }
 
@@ -1215,6 +1251,9 @@
 
       document.body.appendChild(script);
       currentScript = script;
+
+      // Apply "wow theme" to widget after it mounts
+      applyWidgetThemeWhenReady(clientId);
     }
 
     // ===== Tabs pill animation =====
@@ -1274,7 +1313,6 @@
     (function initGlow(){
       const glow = $("glow");
       if (!glow) return;
-
       if (!window.matchMedia("(hover:hover)").matches) return;
 
       let raf = null;
@@ -1306,14 +1344,6 @@
       items.forEach(el => io.observe(el));
     })();
 
-    // ===== Keyboard hint: Enter opens widget =====
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-        try { localStorage.setItem(`kontaktio-open-${currentClientId}`, "1"); } catch {}
-        loadAgent(currentClientId);
-      }
-    });
-
     // ===== Init tabs =====
     document.querySelectorAll("#tabs button").forEach(btn => {
       btn.addEventListener("click", () => setActiveButton(btn));
@@ -1322,6 +1352,91 @@
 
     // ===== Footer year =====
     $("year").textContent = String(new Date().getFullYear());
+
+    // ===== Widget theme override (DEMO ONLY) =====
+    // kontaktio.js uses dynamic IDs: kontaktio-root-${clientId}-${idx}
+    // We search for any root that starts with kontaktio-root-<clientId> and then style internal elements.
+    function applyWidgetThemeWhenReady(clientId){
+      const theme = WIDGET_THEMES[clientId] || WIDGET_THEMES.demo;
+      const start = Date.now();
+      const timeoutMs = 6000;
+
+      const tick = () => {
+        const roots = Array.from(document.querySelectorAll(`[id^="kontaktio-root-${clientId}-"]`));
+        if (roots.length){
+          const root = roots[0];
+          applyThemeToRoot(root, theme);
+          return;
+        }
+        if (Date.now() - start > timeoutMs) return;
+        requestAnimationFrame(tick);
+      };
+
+      requestAnimationFrame(tick);
+    }
+
+    function applyThemeToRoot(root, theme){
+      // Launcher + widget
+      const launcher = root.querySelector(".kontaktio-launcher");
+      const widget = root.querySelector(".kontaktio-widget");
+      const header = root.querySelector(".kontaktio-header");
+      const input = root.querySelector(".kontaktio-input");
+      const send = root.querySelector(".kontaktio-send");
+      const quick = root.querySelector(".kontaktio-quick");
+
+      // Make sure widget looks premium
+      if (widget){
+        widget.style.border = `1px solid ${theme.border}`;
+        widget.style.background = theme.widgetBg;
+        widget.style.backdropFilter = "blur(18px)";
+      }
+      if (header){
+        header.style.background = theme.headerBg;
+        header.style.color = theme.headerText;
+      }
+      if (launcher){
+        launcher.style.background = theme.launcherBg;
+        launcher.style.color = theme.launcherText;
+      }
+      if (input){
+        input.style.background = theme.inputBg;
+        input.style.color = theme.inputText;
+        input.style.border = "1px solid rgba(255,255,255,.18)";
+      }
+      if (send){
+        send.style.background = theme.headerBg;
+        send.style.color = theme.headerText;
+      }
+      if (quick){
+        quick.querySelectorAll("button").forEach((b) => {
+          b.style.background = theme.quickBg;
+          b.style.color = theme.quickText;
+          b.style.border = "1px solid rgba(255,255,255,.16)";
+          b.style.backdropFilter = "blur(14px)";
+        });
+      }
+
+      // Message bubbles
+      root.querySelectorAll(".kontaktio-row.user .kontaktio-bubble").forEach((b) => {
+        b.style.background = theme.userBg;
+        b.style.color = theme.userText;
+        b.style.border = "1px solid rgba(255,255,255,.10)";
+      });
+
+      root.querySelectorAll(".kontaktio-row.bot .kontaktio-bubble").forEach((b) => {
+        b.style.background = theme.botBg;
+        b.style.color = theme.botText;
+        b.style.border = "1px solid rgba(255,255,255,.10)";
+      });
+
+      // Subtle glow shadow per theme
+      if (launcher){
+        launcher.style.boxShadow = "0 16px 45px rgba(0,0,0,.30)";
+      }
+      if (widget){
+        widget.style.boxShadow = "0 26px 90px rgba(0,0,0,.42)";
+      }
+    }
 
     // ===== Start =====
     setLang("pl");
