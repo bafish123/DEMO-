@@ -2,92 +2,721 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <title>Kontaktio – Demo</title>
+  <title>Kontaktio — Demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <meta name="theme-color" content="#0b1020" />
+  <meta name="color-scheme" content="dark light" />
+
   <style>
+    :root{
+      --bg0:#050816;
+      --bg1:#070b1a;
+      --card: rgba(255,255,255,.08);
+      --card2: rgba(255,255,255,.12);
+      --stroke: rgba(255,255,255,.16);
+      --stroke2: rgba(255,255,255,.22);
+
+      --txt: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.62);
+
+      --shadow: 0 24px 80px rgba(0,0,0,.40);
+      --shadow2: 0 16px 50px rgba(0,0,0,.35);
+
+      --radius: 28px;
+      --ease: cubic-bezier(.2,.9,.2,1);
+
+      --accent1: #7c3aed;
+      --accent2: #2563eb;
+      --accent3: #22d3ee;
+      --accent4: #10b981;
+
+      --tabH: 50px;
+      --safeTop: env(safe-area-inset-top, 0px);
+      --safeBottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
     body {
-      font-family: system-ui, sans-serif;
-      background: #f5f7fb;
-      padding: 40px;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+                   system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: var(--txt);
+      background: radial-gradient(1200px 900px at 20% 10%, #0b1640 0%, transparent 55%),
+                  radial-gradient(900px 700px at 80% 20%, #220b4a 0%, transparent 60%),
+                  linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x: hidden;
     }
 
-    h1 {
-      margin-bottom: 20px;
+    /* ===== Aurora layers ===== */
+    .aurora {
+      position: fixed;
+      inset: -30%;
+      z-index: -3;
+      filter: blur(80px);
+      transform: translateZ(0);
+      background:
+        radial-gradient(35% 30% at 18% 25%, rgba(124,58,237,.55), transparent 60%),
+        radial-gradient(35% 30% at 82% 18%, rgba(37,99,235,.55), transparent 60%),
+        radial-gradient(30% 30% at 50% 88%, rgba(34,211,238,.50), transparent 62%),
+        radial-gradient(25% 25% at 72% 78%, rgba(16,185,129,.38), transparent 64%);
+      animation: auroraFloat 14s var(--ease) infinite alternate;
     }
 
-    .tabs {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
+    .aurora::after{
+      content:"";
+      position:absolute;
+      inset:-10%;
+      background:
+        radial-gradient(40% 35% at 30% 75%, rgba(37,99,235,.25), transparent 60%),
+        radial-gradient(35% 35% at 70% 30%, rgba(124,58,237,.25), transparent 60%);
+      animation: auroraFloat2 18s var(--ease) infinite alternate;
     }
 
-    .tabs button {
-      padding: 10px 16px;
+    @keyframes auroraFloat {
+      from { transform: translate3d(-1.5%, -1.2%, 0) scale(1.02); }
+      to   { transform: translate3d( 1.2%,  1.6%, 0) scale(1.06); }
+    }
+    @keyframes auroraFloat2 {
+      from { transform: translate3d( 1.0%, -1.4%, 0) scale(1.00); opacity: .85; }
+      to   { transform: translate3d(-1.1%,  1.2%, 0) scale(1.08); opacity: 1; }
+    }
+
+    /* Mouse glow */
+    .glow {
+      position: fixed;
+      width: 700px;
+      height: 700px;
       border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      background: #e5e7eb;
-      font-weight: 600;
+      pointer-events: none;
+      z-index: -2;
+      background: radial-gradient(circle at center, rgba(255,255,255,.12), transparent 55%);
+      filter: blur(2px);
+      transform: translate3d(-9999px,-9999px,0);
+      transition: opacity .25s ease;
+      opacity: 0;
+    }
+    @media (hover:hover){
+      body:hover .glow { opacity: 1; }
     }
 
-    .tabs button.active {
-      background: #2563eb;
-      color: #fff;
+    /* Noise overlay */
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      opacity: .08;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+    }
+
+    /* ===== Layout ===== */
+    .wrap{
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: calc(44px + var(--safeTop)) 24px calc(110px + var(--safeBottom));
+    }
+
+    .hero{
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 22px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    .headline{
+      padding: 22px 22px 18px;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border: 1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .headline::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(700px 220px at 30% 20%, rgba(255,255,255,.12), transparent 55%);
+      pointer-events:none;
+    }
+
+    h1{
+      margin: 0 0 10px;
+      font-size: clamp(34px, 4.6vw, 58px);
+      line-height: 1.03;
+      letter-spacing: -0.03em;
+      font-weight: 720;
+    }
+
+    .sub{
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+      max-width: 70ch;
+    }
+
+    .chips{
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.78);
+      font-size: 12px;
+      user-select: none;
+      transition: transform .35s var(--ease), border-color .35s var(--ease), background .35s var(--ease);
+    }
+    .chip:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.24);
+      background: rgba(255,255,255,.08);
+    }
+    .dot{
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.25));
+      box-shadow: 0 0 0 3px rgba(255,255,255,.08);
+    }
+
+    /* Side card */
+    .side{
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border: 1px solid var(--stroke);
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(18px);
+      padding: 18px;
+      overflow: hidden;
+      position: relative;
+    }
+    .side::before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background: radial-gradient(460px 260px at 70% 20%, rgba(34,211,238,.18), transparent 60%),
+                  radial-gradient(420px 260px at 20% 80%, rgba(124,58,237,.16), transparent 60%);
+      pointer-events:none;
+    }
+
+    .metricRow{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .metric{
+      padding: 12px 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+    }
+    .metric b{
+      display:block;
+      font-size: 13px;
+      letter-spacing: .01em;
+      font-weight: 680;
+      color: rgba(255,255,255,.86);
+      margin-bottom: 6px;
+    }
+    .metric span{
+      display:block;
+      font-size: 12px;
+      color: rgba(255,255,255,.62);
+      line-height: 1.5;
+    }
+
+    /* ===== Tabs / Switcher ===== */
+    .switcher{
+      margin-top: 18px;
+      display: flex;
+      justify-content: flex-start;
+      position: relative;
+    }
+
+    .tabs{
+      display: inline-flex;
+      gap: 6px;
+      padding: 7px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--stroke);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 10px 35px rgba(0,0,0,.22);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tabs .pill{
+      position: absolute;
+      top: 7px;
+      left: 7px;
+      height: var(--tabH);
+      width: 120px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 16px 45px rgba(0,0,0,.22);
+      transition: transform .55s var(--ease), width .55s var(--ease);
+      will-change: transform, width;
+      z-index: 0;
+    }
+
+    .tabs button{
+      position: relative;
+      z-index: 1;
+      appearance: none;
+      border: none;
+      background: transparent;
+      height: var(--tabH);
+      padding: 0 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 680;
+      font-size: 13px;
+      letter-spacing: .01em;
+      color: rgba(255,255,255,.62);
+      transition: color .35s var(--ease), transform .35s var(--ease);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+      outline: none;
+    }
+
+    .tabs button:hover{
+      color: rgba(255,255,255,.86);
+      transform: translateY(-1px);
+    }
+
+    .tabs button.active{
+      color: rgba(2,6,23,.92);
+    }
+
+    .tag{
+      display: inline-flex;
+      align-items: center;
+      height: 20px;
+      padding: 0 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.70);
+      font-size: 11px;
+      font-weight: 650;
+      transition: all .35s var(--ease);
+    }
+    .tabs button.active .tag{
+      border-color: rgba(0,0,0,.06);
+      background: rgba(0,0,0,.05);
+      color: rgba(0,0,0,.56);
+    }
+
+    /* ===== Active agent content ===== */
+    .panel{
+      margin-top: 16px;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border: 1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      padding: 18px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .panel::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(700px 260px at 15% 20%, rgba(37,99,235,.14), transparent 60%),
+                  radial-gradient(700px 260px at 85% 70%, rgba(124,58,237,.14), transparent 60%);
+      pointer-events:none;
+    }
+
+    .panelTop{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .agentTitle{
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -.01em;
+      font-weight: 720;
+    }
+
+    .agentDesc{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: 90ch;
+    }
+
+    .actions{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .btn{
+      height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.86);
+      cursor: pointer;
+      font-weight: 650;
+      font-size: 12px;
+      transition: transform .35s var(--ease), border-color .35s var(--ease), background .35s var(--ease);
+      user-select: none;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.24);
+      background: rgba(255,255,255,.08);
+    }
+
+    .btn.primary{
+      border-color: rgba(255,255,255,.0);
+      background: linear-gradient(135deg, rgba(37,99,235,.95), rgba(124,58,237,.95));
+      box-shadow: 0 14px 40px rgba(37,99,235,.25);
+    }
+
+    .divider{
+      height: 1px;
+      background: rgba(255,255,255,.10);
+      margin: 14px 0 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== Mobile layout ===== */
+    @media (max-width: 920px){
+      .hero{
+        grid-template-columns: 1fr;
+      }
+      .actions{
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 520px){
+      .wrap{
+        padding: calc(26px + var(--safeTop)) 16px calc(100px + var(--safeBottom));
+      }
+      .tabs{
+        width: 100%;
+      }
+      .tabs button{
+        flex: 1;
+        justify-content: center;
+        padding: 0 10px;
+      }
+      .tabs .pill{
+        height: var(--tabH);
+      }
+      .panel{
+        padding: 16px;
+      }
+    }
+
+    /* ===== Reduced motion support ===== */
+    @media (prefers-reduced-motion: reduce){
+      .aurora, .aurora::after { animation: none !important; }
+      .tabs .pill, .tabs button, .chip, .btn { transition: none !important; }
+      .glow { display:none !important; }
+    }
+
+    /* ===== Page entrance ===== */
+    .enter{
+      animation: enter .65s var(--ease) both;
+    }
+    @keyframes enter{
+      from{ opacity: 0; transform: translateY(10px); }
+      to{ opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 
 <body>
+  <div class="aurora"></div>
+  <div class="noise"></div>
+  <div class="glow" id="glow"></div>
 
-<h1>Kontaktio – Demo agentów</h1>
+  <main class="wrap enter">
+    <section class="hero">
+      <div class="headline">
+        <h1>Demo asystentów AI, które sprzedają.</h1>
+        <p class="sub">
+          Przełączaj agentów jak „profile” — każdy ma własny styl, wiedzę i ton.
+          To nie jest chatbot. To jest obsługa klienta w wersji premium.
+        </p>
 
-<div class="tabs">
-  <button data-client="SAWO" class="active">amico</button>
-  <button data-client="demo">Demo</button>
-  <button data-client="premium">Premium</button>
-</div>
+        <div class="chips">
+          <div class="chip"><span class="dot"></span> Konfiguracja z backendu w czasie rzeczywistym</div>
+          <div class="chip"><span class="dot"></span> Jeden embed, wiele osobowości</div>
+          <div class="chip"><span class="dot"></span> Bez Supabase w przeglądarce</div>
+          <div class="chip"><span class="dot"></span> Gotowe pod mobile i dark vibe</div>
+        </div>
 
-<!-- TU BĘDZIE ŁADOWANY WIDGET -->
-<div id="kontaktio-container"></div>
+        <div class="switcher">
+          <div class="tabs" id="tabs">
+            <div class="pill" id="pill"></div>
 
-<script>
-  const BACKEND_URL = "https://chatbot-backend-x2cy.onrender.com";
-  const SCRIPT_SRC = "https://cdn.jsdelivr.net/gh/kontaktio-demo/kontaktio@5d9beb0/kontaktio.js";
+            <button data-client="amico" class="active" data-label="Amico">
+              Amico <span class="tag">lokalny</span>
+            </button>
+            <button data-client="demo" data-label="Demo">
+              Demo <span class="tag">uniwersalny</span>
+            </button>
+            <button data-client="premium" data-label="Premium">
+              Premium <span class="tag">elegancki</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
-  let currentScript = null;
+      <aside class="side">
+        <div class="metricRow">
+          <div class="metric">
+            <b>Jak testować</b>
+            <span>Kliknij ikonę czatu w prawym dolnym rogu. Zadaj pytanie o ofertę, godziny, wycenę.</span>
+          </div>
 
-  function loadAgent(clientId) {
-    // usuń poprzedni widget
-    document.querySelectorAll("[id^='kontaktio-root']").forEach(el => el.remove());
-    if (currentScript) currentScript.remove();
+          <div class="metric">
+            <b>Co robi „wow”</b>
+            <span>To jest ta sama technologia — ale różne konfiguracje zmieniają doświadczenie jak dzień i noc.</span>
+          </div>
 
-    // reset flagi
-    window.__KontaktioBooted = false;
+          <div class="metric">
+            <b>Wersja demo</b>
+            <span>Wszystko działa live. Konfiguracja agentów przychodzi z backendu Kontaktio.</span>
+          </div>
+        </div>
+      </aside>
+    </section>
 
-    // załaduj nowy agent
-    const script = document.createElement("script");
-    script.src = SCRIPT_SRC;
-    script.setAttribute("data-kontaktio", "");
-    script.setAttribute("data-client", clientId);
-    script.setAttribute("data-backend", BACKEND_URL);
+    <section class="panel">
+      <div class="panelTop">
+        <div>
+          <h2 class="agentTitle" id="agentTitle">Amico</h2>
+          <p class="agentDesc" id="agentDesc">
+            Styl przyjazny i konkretny. Idealny do firm usługowych, gdzie liczy się szybka odpowiedź i kontakt.
+          </p>
+        </div>
 
-    document.body.appendChild(script);
-    currentScript = script;
-  }
+        <div class="actions">
+          <button class="btn" id="btnOpen">Otwórz asystenta</button>
+          <button class="btn" id="btnClear">Wyczyść historię</button>
+          <button class="btn primary" id="btnCopy">Skopiuj embed</button>
+        </div>
+      </div>
 
-  // obsługa kliknięć
-  document.querySelectorAll(".tabs button").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("active"));
+      <div class="divider"></div>
+    </section>
+  </main>
+
+  <script>
+    // ==== KONFIG (Twoje realne wartości) ====
+    const BACKEND_URL = "https://chatbot-backend-x2cy.onrender.com";
+    const SCRIPT_SRC = "https://cdn.jsdelivr.net/gh/kontaktio-demo/kontaktio@5d9beb0/kontaktio.js";
+
+    // ==== Opisy agentów (wow + kontekst dla klienta) ====
+    const AGENTS = {
+      amico: {
+        title: "Amico",
+        desc: "Styl przyjazny i konkretny. Idealny do firm usługowych, gdzie liczy się szybka odpowiedź i kontakt."
+      },
+      demo: {
+        title: "Demo",
+        desc: "Uniwersalny asystent pokazujący możliwości Kontaktio. Dobrze balansuje szczegółowość i zwięzłość."
+      },
+      premium: {
+        title: "Premium",
+        desc: "Ton spokojny, elegancki i ekskluzywny. Dla marek, gdzie liczy się wrażenie i precyzja."
+      }
+    };
+
+    let currentScript = null;
+    let currentClientId = "amico";
+
+    const $ = (id) => document.getElementById(id);
+
+    function setAgentMeta(clientId){
+      const a = AGENTS[clientId] || { title: clientId, desc: "" };
+      $("agentTitle").textContent = a.title;
+      $("agentDesc").textContent = a.desc;
+    }
+
+    function resetKontaktio(){
+      // usuń poprzedni widget
+      document.querySelectorAll("[id^='kontaktio-root']").forEach(el => el.remove());
+      if (currentScript) currentScript.remove();
+
+      // reset flagi (bo kontaktio.js jest singletonem)
+      window.__KontaktioBooted = false;
+      window.__KontaktioBooted = false; // celowo: w razie reinitu z opóźnieniem
+    }
+
+    function loadAgent(clientId){
+      currentClientId = clientId;
+
+      resetKontaktio();
+
+      const script = document.createElement("script");
+      script.src = SCRIPT_SRC;
+      script.setAttribute("data-kontaktio", "");
+      script.setAttribute("data-client", clientId);
+      script.setAttribute("data-backend", BACKEND_URL);
+
+      document.body.appendChild(script);
+      currentScript = script;
+    }
+
+    function movePillToActive(){
+      const tabs = $("tabs");
+      const pill = $("pill");
+      const active = tabs.querySelector("button.active");
+      if (!active) return;
+
+      const tabsRect = tabs.getBoundingClientRect();
+      const aRect = active.getBoundingClientRect();
+
+      const x = aRect.left - tabsRect.left;
+      pill.style.width = aRect.width + "px";
+      pill.style.transform = `translate3d(${x}px, 0, 0)`;
+    }
+
+    function setActiveButton(btn){
+      document.querySelectorAll("#tabs button").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      loadAgent(btn.dataset.client);
+      movePillToActive();
+
+      const clientId = btn.dataset.client;
+      setAgentMeta(clientId);
+
+      // micro transition: re-enter panel
+      const panel = document.querySelector(".panel");
+      panel.classList.remove("enter");
+      void panel.offsetWidth;
+      panel.classList.add("enter");
+
+      loadAgent(clientId);
+    }
+
+    // ==== Buttons actions ====
+    function clearHistoryFor(clientId){
+      try {
+        localStorage.removeItem(`kontaktio-history-${clientId}`);
+        localStorage.removeItem(`kontaktio-session-${clientId}`);
+        localStorage.removeItem(`kontaktio-open-${clientId}`);
+      } catch {}
+    }
+
+    function buildEmbed(clientId){
+      return `<script src="${SCRIPT_SRC}" data-kontaktio data-client="${clientId}" data-backend="${BACKEND_URL}"></` + `script>`;
+    }
+
+    function copyToClipboard(text){
+      if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+      return Promise.resolve();
+    }
+
+    // ==== Mouse glow follow ====
+    (function initGlow(){
+      const glow = $("glow");
+      if (!glow) return;
+
+      let raf = null;
+      let x = -9999, y = -9999;
+
+      function onMove(e){
+        x = e.clientX - 350;
+        y = e.clientY - 350;
+        if (raf) return;
+        raf = requestAnimationFrame(() => {
+          glow.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+          raf = null;
+        });
+      }
+
+      if (window.matchMedia("(hover:hover)").matches) {
+        window.addEventListener("mousemove", onMove, { passive: true });
+      }
+    })();
+
+    // ==== Init tabs ====
+    document.querySelectorAll("#tabs button").forEach(btn => {
+      btn.addEventListener("click", () => setActiveButton(btn));
     });
-  });
 
-  // startowy agent
-  loadAgent("amico");
-</script>
+    window.addEventListener("resize", movePillToActive, { passive: true });
 
+    // ==== CTA buttons ====
+    $("btnClear").addEventListener("click", async () => {
+      clearHistoryFor(currentClientId);
+      // restart widget (żeby od razu zobaczyć "czysto")
+      loadAgent(currentClientId);
+      // mikro feedback
+      const b = $("btnClear");
+      const old = b.textContent;
+      b.textContent = "Wyczyszczono";
+      setTimeout(() => (b.textContent = old), 900);
+    });
+
+    $("btnCopy").addEventListener("click", async () => {
+      const code = buildEmbed(currentClientId);
+      await copyToClipboard(code);
+      const b = $("btnCopy");
+      const old = b.textContent;
+      b.textContent = "Skopiowano embed";
+      setTimeout(() => (b.textContent = old), 1100);
+    });
+
+    $("btnOpen").addEventListener("click", () => {
+      // kontaktio.js trzyma stan otwarcia w localStorage -> ustawiamy na open i reload
+      try {
+        localStorage.setItem(`kontaktio-open-${currentClientId}`, "1");
+      } catch {}
+      loadAgent(currentClientId);
+    });
+
+    // ==== Start state ====
+    setAgentMeta("amico");
+    movePillToActive();
+    loadAgent("amico");
+  </script>
 </body>
 </html>
