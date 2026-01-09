@@ -1078,6 +1078,60 @@
     @media (prefers-reduced-motion: reduce) {
       .kontaktio-widget::before,
       .kontaktio-launcher::before { animation: none !important; }
+      #demo-sites {
+  padding: 80px 0;
+  text-align: center;
+}
+
+#demo-sites .section-title {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+#demo-sites .section-subtitle {
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto 40px;
+}
+
+.demo-grid {
+  display: flex;
+  justify-content: center;
+}
+
+.demo-card {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  padding: 30px;
+  border-radius: 16px;
+  background: #fafafa;
+  border: 1px solid #eee;
+  transition: 0.2s;
+  text-decoration: none;
+  color: inherit;
+}
+
+.demo-card:hover {
+  transform: translateY(-4px);
+  border-color: #ddd;
+}
+
+.demo-card-inner h3 {
+  margin: 0 0 10px;
+  font-size: 22px;
+}
+
+.demo-card-inner p {
+  margin: 0 0 20px;
+  color: #555;
+}
+
+.demo-cta {
+  font-weight: 600;
+  color: #0070f3;
+}
+
     }
   </style>
 </head>
@@ -1209,6 +1263,24 @@
 
       <div class="divider"></div>
     </section>
+<section id="demo-sites" class="section">
+  <div class="container">
+    <h2 class="section-title">Zobacz, jak może wyglądać Twoja strona</h2>
+    <p class="section-subtitle">
+      Przygotowałem gotowe przykłady stron dla różnych branż. Każda z nich działa z Twoim własnym asystentem AI.
+    </p>
+
+    <div class="demo-grid">
+      <a href="branze.html" class="demo-card">
+        <div class="demo-card-inner">
+          <h3>Przykładowe realizacje</h3>
+          <p>Strony dla salonów, restauracji, hoteli, trenerów, usług i wielu innych.</p>
+          <span class="demo-cta">Zobacz wszystkie branże →</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
 
     
     <section class="card section reveal" data-reveal>
